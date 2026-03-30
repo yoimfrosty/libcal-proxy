@@ -11,15 +11,16 @@ export default async function handler(req, res) {
       }
     });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      return res.status(response.status).json(data);
-    }
+    const raw = await response.text();
 
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Content-Type", "application/json");
-    return res.status(200).json(data);
+
+    return res.status(response.status).json({
+      requested_url: url,
+      status: response.status,
+      raw_response: raw
+    });
   } catch (error) {
     return res.status(500).json({
       error: "Server error",
